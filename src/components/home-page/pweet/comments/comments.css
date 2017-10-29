@@ -1,0 +1,11 @@
+.comments-section .add-comment-container .field {
+	width: 100%;
+}
+
+.comments-section .add-comment-container textarea {
+	resize: none;
+}
+
+.comments-section .actions-container {
+	justify-content: flex-end;
+}
