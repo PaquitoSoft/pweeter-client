@@ -2,6 +2,7 @@ import React from 'react';
 
 import HomePage from './home-page/home-page';
 
+import 'font-awesome/css/font-awesome.min.css';
 import 'bulma/css/bulma.css';
 import './app.css';
 
