@@ -13,6 +13,15 @@ function renderTags(tags) {
 }
 
 class Pweet extends React.Component {
+
+	constructor() {
+		super();
+
+		this.state = {
+			showComments: false
+		};
+	}
+
 	render() {
 		const { pweet } = this.props;
 
@@ -41,11 +50,20 @@ class Pweet extends React.Component {
 									{renderTags(pweet.tags)}
 								</div>
 								<div className="level-right">
-									<a href="#" className="is-primary">Comments</a>
+									<a
+										href="#"
+										className="is-primary"
+										onClick={(event) => {
+											event.preventDefault();
+											this.setState(({ showComments }) => {
+												return { showComments: !showComments }
+											});
+										}}
+									>Comments</a>
 								</div>
 							</div>
 
-							<Comments comments={pweet.comments} />
+							{this.state.showComments && <Comments comments={pweet.comments} />}
 						</div>
 					</article>
 				</div>
