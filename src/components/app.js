@@ -1,4 +1,8 @@
 import React from 'react';
+import {
+	BrowserRouter as Router,
+	Route
+} from 'react-router-dom'
 
 import HomePage from './home-page/home-page';
 
@@ -12,7 +16,7 @@ function App() {
 			<header>
 				<div className="container">
 					<h1 className="title">
-						Pwitter
+						Linky
 					</h1>
 					<p className="subtitle">
 						Share interest technical content with your collegues
@@ -21,7 +25,9 @@ function App() {
 			</header>
 
 			<div className="main-content">
-				<HomePage />
+				<Router>
+					<Route exact path="/" component={HomePage} />
+				</Router>
 			</div>
 		</div>
 	);
