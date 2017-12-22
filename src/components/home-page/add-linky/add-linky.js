@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AddPweet extends React.Component {
+class AddLinky extends React.Component {
 	constructor() {
 		super();
 
@@ -11,24 +11,24 @@ class AddPweet extends React.Component {
 
 	render() {
 		return (
-			<section className="add-pweet-container is-clearfix">
+			<section className="add-linky-container is-clearfix">
 				<div className="field">
 					<div className="control">
 						<input
 							className="input"
-							name="pweet-value"
+							name="linky-value"
 							placeholder="Share a link"
 							onFocus={() => this.setState({ showButton: true })}
 							onBlur={() => this.setState({ showButton: false })}
 						/>
 					</div>
 				</div>
-				<div className={`add-pweet-actions ${this.state.showButton ? '' : 'hidden'}`}>
-					<button className="button is-primary is-pulled-right add-pweet">Share it!</button>
+				<div className={`add-linky-actions ${this.state.showButton ? '' : 'hidden'}`}>
+					<button className="button is-primary is-pulled-right add-linky">Share it!</button>
 				</div>
 			</section>
 		);
 	}
 }
 
-export default AddPweet;
+export default AddLinky;

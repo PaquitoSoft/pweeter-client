@@ -1,11 +1,11 @@
 import React from 'react';
 
-import AddPweet from './add-pweet/add-pweet';
-import Pweet from './pweet/pweet';
+import AddLinky from './add-linky/add-linky';
+import Linky from './linky/linky';
 
 import './home-page.css';
 
-const fakePweets = [{
+const fakeLinkies = [{
 	id: '100',
 	user: {
 		id: 'jrkewjhfjkhsdkjhflkshfakl',
@@ -27,8 +27,8 @@ const fakePweets = [{
 
 class HomePage extends React.Component {
 
-	renderPweets(pweets) {
-		return pweets.map(pweet => (<Pweet key={pweet.id} pweet={pweet} />));
+	renderLinkies(linkies) {
+		return linkies.map(linky => (<Linky key={linky.id} linky={linky} />));
 	}
 
 	render() {
@@ -37,11 +37,11 @@ class HomePage extends React.Component {
 				<div className="columns">
 					<div className="column is-8 is-offset-2">
 
-						<AddPweet />
+						<AddLinky />
 
 						<section className="pweets-list-container">
 							<ol>
-								{this.renderPweets(fakePweets)}
+								{this.renderLinkies(fakeLinkies)}
 							</ol>
 						</section>
 
