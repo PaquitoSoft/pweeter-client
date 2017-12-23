@@ -1,0 +1,11 @@
+.login-page {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 20em;
+}
+
+.login-page .login-button {
+	max-width: 50%;
+	min-width: 8em;
+}

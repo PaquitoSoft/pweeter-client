@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-	BrowserRouter as Router,
-	Route
+	BrowserRouter
 } from 'react-router-dom'
 
+import Route from '../components/shared/route/route';
 import HomePage from './home-page/home-page';
+import LoginPage from './login-page/login-page';
 
 import 'font-awesome/css/font-awesome.min.css';
 import 'bulma/css/bulma.css';
@@ -15,20 +16,24 @@ function App() {
 		<div className="app">
 			<header>
 				<div className="container">
-					<h1 className="title">
-						Linky
-					</h1>
+					<a href="/">
+						<h1 className="title">
+							Linky
+						</h1>
+					</a>
 					<p className="subtitle">
 						Share interest technical content with your collegues
 					</p>
 				</div>
 			</header>
 
-			<div className="main-content">
-				<Router>
+			<BrowserRouter>
+				<div className="main-content">
 					<Route exact path="/" component={HomePage} />
-				</Router>
-			</div>
+					<Route path="/login" component={LoginPage} isPublicRoute={true} />
+					<Route path="/login-callback" component={LoginPage} isPublicRoute={true} />
+				</div>
+			</BrowserRouter>
 		</div>
 	);
 }
