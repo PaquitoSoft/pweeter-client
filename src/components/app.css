@@ -4,6 +4,10 @@ body {
 	font-family: sans-serif;
 }
 
+.app header {
+	margin-left: 1.5rem;
+}
+
 .app a {
 	color: #00d1b2;
 }
@@ -19,4 +23,10 @@ body {
 /* Helpers */
 .hidden {
 	display: none;
+}
+
+.centered-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
