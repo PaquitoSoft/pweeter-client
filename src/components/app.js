@@ -15,15 +15,17 @@ function App() {
 	return (
 		<div className="app">
 			<header>
-				<div className="container">
-					<a href="/">
-						<h1 className="title">
-							Linky
-						</h1>
-					</a>
-					<p className="subtitle">
-						Share interest technical content with your collegues
-					</p>
+				<div className="columns">
+					<div className="column is-8 is-offset-2">
+						<a href="/">
+							<h1 className="title">
+								Linky
+							</h1>
+						</a>
+						<p className="subtitle">
+							Share interest technical content with your collegues
+						</p>
+					</div>
 				</div>
 			</header>
 
