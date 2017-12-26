@@ -1,3 +1,20 @@
+.linky .content p.linky-header {
+	margin-bottom: 5px;
+}
+
+.linky .url {
+	font-size: 24px;
+	padding-left: 10px;
+}
+
+.linky .created-date {
+	font-style: italic;
+}
+
+.linky .like-linky {
+	margin-left: 5px;
+}
+
 .linky .like-linky:hover {
 	cursor: pointer;
 	border-radius: 5px;

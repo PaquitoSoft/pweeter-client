@@ -1,8 +1,9 @@
 import React from 'react';
-import { shape, arrayOf, string, number, object } from 'prop-types';
+import { shape, arrayOf, string, array, object } from 'prop-types';
 
 import Tag from './tag/tag';
-import Comments from './comments/comments';
+import CommentsList from './comments-list/comments-list';
+import DateTime from '../../shared/date-time/date-time';
 
 import './linky.css';
 
@@ -31,19 +32,27 @@ class Linky extends React.Component {
 					<article className="media">
 						<div className="media-left">
 							<figure className="image is-64x64">
-									<img src="https://bulma.io/images/placeholders/128x128.png" alt={linky.text} />
+								<img src="https://bulma.io/images/placeholders/128x128.png" data-alt={linky.text} />
 							</figure>
 						</div>
 						<div className="media-content">
 							<div className="content">
-								<p>
-									<strong>{linky.user.name}</strong>
-									<small>{linky.createDate}</small>
-									<span className="icon is-pulled-right like-linky">
-										<i className="fa fa-thumbs-o-up"></i>
+								<p className="linky-header">
+									Published by&nbsp;
+									<strong>{linky.owner.name}</strong>
+									&nbsp;on:&nbsp;
+									<small className="created-date"><DateTime date={linky.createdAt} /></small>
+									<span className="is-pulled-right">
+										{
+											!!linky.votes.length &&
+											(<span>{linky.votes.length}&nbsp;{`like${linky.votes.length > 1 ? 's' : ''}`}</span>)
+										}
+										<span className="icon like-linky">
+											<i className="fa fa-thumbs-o-up"></i>
+										</span>
 									</span>
 								</p>
-								{linky.text}
+								<a href={linky.url} className="url" target="_blank">{linky.url}</a>
 							</div>
 							<div className="level is-mobile">
 								<div className="level-left">
@@ -59,11 +68,16 @@ class Linky extends React.Component {
 												return { showComments: !showComments }
 											});
 										}}
-									>Comments</a>
+									>
+										{
+											!!linky.comments.length && linky.comments.length
+										}
+										&nbsp;{`Comment${linky.comments.length > 1 ? 's' : ''}`}
+									</a>
 								</div>
 							</div>
 
-							{this.state.showComments && <Comments comments={linky.comments} />}
+							{this.state.showComments && <CommentsList linky={linky} comments={linky.comments} />}
 						</div>
 					</article>
 				</div>
@@ -78,9 +92,9 @@ Linky.propTypes = {
 			id: string.isRequired,
 			name: string.isRequired
 		}),
-		createDate: string.isRequired,
-		likes: number,
-		text: string.isRequired,
+		url: string.isRequired,
+		votes: array,
+		text: string,
 		tags: arrayOf(object),
 		comments: arrayOf(object)
 	})
