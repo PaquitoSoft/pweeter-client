@@ -30,10 +30,10 @@ function LoginPage({ location, loginMutation, history }) {
 
 		return (
 			<section className="section login-page">
-				<a
+				<button
 					href="#"
 					className="button is-primary is-large is-outlined is-loading login-button">
-				</a>
+				</button>
 			</section>
 		);
 	}
