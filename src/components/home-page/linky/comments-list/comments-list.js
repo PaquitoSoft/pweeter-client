@@ -18,9 +18,6 @@ class CommentsList extends React.Component {
 				comment: this.commentText.value
 			},
 			update: (store, { data: { addLinkComment } }) => {
-				console.log(store);
-				console.log(addLinkComment);
-
 				this.props.onCommentAdded(store, addLinkComment);
 			}
 		});
@@ -28,16 +25,23 @@ class CommentsList extends React.Component {
 		this.commentText.value = '';
 	}
 
-	renderComments(comments) {
+	renderComments(linky, comments, removeCommentHandler) {
 		return comments.map((comment, index) => {
-			return (<Comment key={index} comment={comment} />);
+			return (
+				<Comment
+					key={index}
+					linkyId={linky.id}
+					comment={comment}
+					removeCommentHandler={removeCommentHandler}
+				/>
+			);
 		});
 	}
 
 	render() {
 		return (
 			<section className="comments-section">
-				{this.renderComments(this.props.comments)}
+				{this.renderComments(this.props.linky, this.props.comments, this.props.removeCommentHandler)}
 
 				<article className="media add-comment-container">
 					<div className="media-content">
@@ -71,7 +75,9 @@ CommentsList.propTypes = {
 		id: string
 	}),
 	comments: array,
-	addCommentMutation: func
+	addCommentMutation: func,
+	onCommentAdded: func,
+	removeCommentHandler: func
 };
 
 const ADD_COMMENT_MUTATION = gql`

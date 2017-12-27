@@ -32,6 +32,17 @@ class Linky extends React.Component {
 		this.props.onLinkyModified(store, _linky);
 	}
 
+	removeCommentHandler = (store, commentId) => {
+		const _linky = {...this.props.linky};
+		const commentIndex = (_linky.comments || []).findIndex(_comment => _comment.id === commentId);
+
+		if (commentIndex !== -1) {
+			_linky.comments = [..._linky.comments.slice(0, commentIndex), ..._linky.comments.slice(commentIndex + 1)];
+		}
+
+		this.props.onLinkyModified(store, _linky);
+	}
+
 	render() {
 		const { linky } = this.props;
 
@@ -92,6 +103,7 @@ class Linky extends React.Component {
 									linky={linky}
 									comments={linky.comments}
 									onCommentAdded={this.onCommentAdded}
+									removeCommentHandler={this.removeCommentHandler}
 								/>
 							}
 						</div>

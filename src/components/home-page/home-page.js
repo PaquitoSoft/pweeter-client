@@ -43,7 +43,13 @@ class HomePage extends React.Component {
 	}
 
 	renderLinkies(linkies) {
-		return linkies.map(linky => (<Linky key={linky.id} linky={linky} onLinkyModified={this.updateLinkiesCache} />));
+		return linkies.map(linky =>
+			(<Linky
+				key={linky.id}
+				linky={linky}
+				onLinkyModified={this.updateLinkiesCache} />
+			)
+		);
 	}
 
 	render() {

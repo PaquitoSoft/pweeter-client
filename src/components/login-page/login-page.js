@@ -69,6 +69,7 @@ const LOGIN_MUTATION = gql`
 			token: $code,
 			hash: $state
 		) {
+			id
 			email
 			name
 			token

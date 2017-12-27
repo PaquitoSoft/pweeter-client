@@ -1,5 +1,19 @@
 .comment {
+	position: relative;
 	font-size: 14px;
+}
+
+.comment .remove-comment {
+	position: absolute;
+	right: 5px;
+	cursor: pointer;
+}
+
+.comment .remove-comment:hover {
+	border-radius: 5px;
+	background-color: #00d1b2;
+	color: #fff;
+	font-size: 18px;
 }
 
 .comment .text {
