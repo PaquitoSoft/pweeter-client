@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { bool, array, func } from 'prop-types';
 
 import AddLinky from './add-linky/add-linky';
 import Linky from './linky/linky';
-import LinksQuery from './links-query';
+import LinksQuery, { SEARCH_LINKS_QUERY } from './links-query';
 
 import './home-page.css';
 
@@ -11,34 +11,39 @@ const RESULTS_QUERY_COUNT = 5;
 
 class HomePage extends React.Component {
 
+	constructor() {
+		super();
+		this.state = {
+			currentPage: 1
+		};
+	}
+
+	updateLinkiesCache = (store, linky) => {
+		const queryInfo = {
+			query: SEARCH_LINKS_QUERY,
+			variables: {
+				first: 0,
+				count: this.state.currentPage * RESULTS_QUERY_COUNT
+			}
+		};
+		const data = store.readQuery(queryInfo);
+
+		const linkyIndex = data.searchLinks.findIndex(link => link.id === linky.id);
+
+		if (linkyIndex !== -1) {
+			data.searchLinks.splice(linkyIndex, 1, linky);
+		} else {
+			data.searchLinks.push(linky);
+		}
+
+		store.writeQuery({
+			...queryInfo,
+			data
+		});
+	}
+
 	renderLinkies(linkies) {
-		return linkies.map(linky => (<Linky key={linky.id} linky={linky} />));
-	}
-
-	renderLoading() {
-		return (
-			<section className="section home-page">
-				<div className="centered-container">
-					<a
-						href="#"
-						className="button is-primary is-large is-outlined is-inverted is-loading">
-					</a>
-				</div>
-			</section>
-		);
-	}
-
-	renderMainContent(links) {
-		return [
-			(<AddLinky key="form" />),
-			(
-				<section key="list" className="pweets-list-container">
-					<ol>
-						{this.renderLinkies(links)}
-					</ol>
-				</section>
-			)
-		];
+		return linkies.map(linky => (<Linky key={linky.id} linky={linky} onLinkyModified={this.updateLinkiesCache} />));
 	}
 
 	render() {
@@ -48,7 +53,16 @@ class HomePage extends React.Component {
 					<div className="column is-8 is-offset-2">
 						<LinksQuery queryResultsSize={RESULTS_QUERY_COUNT}>
 							{({ links/* , loadMoreLinks */ }) => {
-								return this.renderMainContent(links);
+								return (
+									<Fragment>
+										<AddLinky key="form" />
+										<section key="list" className="pweets-list-container">
+											<ol>
+												{this.renderLinkies(links)}
+											</ol>
+										</section>
+									</Fragment>
+								);
 							}}
 						</LinksQuery>
 					</div>

@@ -7,10 +7,10 @@ function LinksQuery({ children, isLoading, links, loadMoreLinks }) {
 	if (isLoading) {
 		return (
 			<section className="section centered-container">
-				<a
+				<button
 					href="#"
 					className="button is-primary is-large is-outlined is-inverted is-loading">
-				</a>
+				</button>
 			</section>
 		)
 	} else {
@@ -25,7 +25,7 @@ LinksQuery.propTypes = {
 	loadMoreLinks: func
 };
 
-const SEARCH_LINKS_QUERY = gql`
+export const SEARCH_LINKS_QUERY = gql`
 	query SearchLinksQuery($first: Int!, $count: Int!) {
 		searchLinks(criteria: {
 			first: $first,

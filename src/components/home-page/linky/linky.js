@@ -1,5 +1,5 @@
 import React from 'react';
-import { shape, arrayOf, string, array, object } from 'prop-types';
+import { shape, arrayOf, string, array, object, func } from 'prop-types';
 
 import Tag from './tag/tag';
 import CommentsList from './comments-list/comments-list';
@@ -23,6 +23,15 @@ class Linky extends React.Component {
 		};
 	}
 
+	onCommentAdded = (store, comment) => {
+		const { linky } = this.props;
+		const _linky = {
+			...linky,
+			comments: linky.comments.concat(comment)
+		}
+		this.props.onLinkyModified(store, _linky);
+	}
+
 	render() {
 		const { linky } = this.props;
 
@@ -32,7 +41,7 @@ class Linky extends React.Component {
 					<article className="media">
 						<div className="media-left">
 							<figure className="image is-64x64">
-								<img src="https://bulma.io/images/placeholders/128x128.png" data-alt={linky.text} />
+								<img src="https://bulma.io/images/placeholders/128x128.png" alt={linky.text} />
 							</figure>
 						</div>
 						<div className="media-content">
@@ -77,7 +86,14 @@ class Linky extends React.Component {
 								</div>
 							</div>
 
-							{this.state.showComments && <CommentsList linky={linky} comments={linky.comments} />}
+							{
+								this.state.showComments &&
+								<CommentsList
+									linky={linky}
+									comments={linky.comments}
+									onCommentAdded={this.onCommentAdded}
+								/>
+							}
 						</div>
 					</article>
 				</div>
@@ -97,7 +113,8 @@ Linky.propTypes = {
 		text: string,
 		tags: arrayOf(object),
 		comments: arrayOf(object)
-	})
+	}),
+	onLinkyModified: func.isRequired
 };
 
 export default Linky;

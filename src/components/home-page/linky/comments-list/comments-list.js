@@ -16,12 +16,15 @@ class CommentsList extends React.Component {
 			variables: {
 				linkId: this.props.linky.id,
 				comment: this.commentText.value
+			},
+			update: (store, { data: { addLinkComment } }) => {
+				console.log(store);
+				console.log(addLinkComment);
+
+				this.props.onCommentAdded(store, addLinkComment);
 			}
 		});
 
-		console.log('This is the new comment:', newComment);
-		// console.log(event.target);
-		// console.log(this.commentText.value);
 		this.commentText.value = '';
 	}
 
@@ -77,7 +80,9 @@ const ADD_COMMENT_MUTATION = gql`
 			linkId: $linkId,
 			comment: $comment
 		) {
+			id
 			user {
+				id
 				name
 			}
 			createdAt
@@ -87,4 +92,3 @@ const ADD_COMMENT_MUTATION = gql`
 `;
 
 export default graphql(ADD_COMMENT_MUTATION, { name: 'addCommentMutation' })(CommentsList);
-// export default Comments;
