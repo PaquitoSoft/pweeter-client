@@ -33,7 +33,7 @@ class HomePage extends React.Component {
 		if (linkyIndex !== -1) {
 			data.searchLinks.splice(linkyIndex, 1, linky);
 		} else {
-			data.searchLinks.push(linky);
+			data.searchLinks.unshift(linky);
 		}
 
 		store.writeQuery({
@@ -61,7 +61,10 @@ class HomePage extends React.Component {
 							{({ links/* , loadMoreLinks */ }) => {
 								return (
 									<Fragment>
-										<AddLinky key="form" />
+										<AddLinky
+											key="form"
+											onLinkyAdded={this.updateLinkiesCache}
+										/>
 										<section key="list" className="pweets-list-container">
 											<ol>
 												{this.renderLinkies(links)}

@@ -1,3 +1,7 @@
+.linky .media-content {
+	max-width: 88%;
+}
+
 .linky .content p.linky-header {
 	margin-bottom: 5px;
 }

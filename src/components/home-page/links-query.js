@@ -9,7 +9,7 @@ function LinksQuery({ children, isLoading, links, loadMoreLinks }) {
 			<section className="section centered-container">
 				<button
 					href="#"
-					className="button is-primary is-large is-outlined is-inverted is-loading">
+					className="button is-primary is-large is-outlined is-inverted is-loading fetching-data-loading">
 				</button>
 			</section>
 		)
@@ -31,8 +31,11 @@ export const SEARCH_LINKS_QUERY = gql`
 			first: $first,
 			count: $count
 		}) {
-			url
 			id
+			url
+			title
+			description
+			imageUrl
 			createdAt
 			votes {
 				id

@@ -1,3 +1,7 @@
 .add-linky-container input[name="linky-tags"] {
 	width: 50%;
 }
+
+.add-linky-container button.add-linky {
+	min-width: 85px;
+}
