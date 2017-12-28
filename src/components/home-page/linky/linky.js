@@ -1,5 +1,8 @@
 import React from 'react';
+import gql from 'graphql-tag';
+import graphql from 'react-apollo/graphql';
 import { shape, arrayOf, string, array, object, func } from 'prop-types';
+import { getAuth } from '../../../service/authentication';
 
 import Tag from './tag/tag';
 import CommentsList from './comments-list/comments-list';
@@ -43,6 +46,35 @@ class Linky extends React.Component {
 		this.props.onLinkyModified(store, _linky);
 	}
 
+	likeCommentHandler = (event) => {
+		event.preventDefault();
+		const { linky } = this.props;
+		const userInfo = getAuth();
+		const alreadyVoted = !!linky.votes.find(({ id }) => id === userInfo.id);
+
+		// TODO Only use server validation???
+		if (linky.owner.id === userInfo.id) {
+			// TODO Show error to users
+			console.error('User cannot vote for one of its links');
+		} else if (alreadyVoted) {
+			// TODO Show error to users
+			console.error('User cannot vote for this linky as he already voted for it');
+		} else {
+			this.props.likeLinkyMutation({
+				variables: { linkId: linky.id },
+				update: (store, { data: { addLinkVote } }) => {
+					this.props.onLinkyModified(
+						store,
+						{
+							...linky,
+							votes: linky.votes.concat(addLinkVote)
+						}
+					);
+				}
+			});
+		}
+	}
+
 	render() {
 		const { linky } = this.props;
 
@@ -67,7 +99,7 @@ class Linky extends React.Component {
 											!!linky.votes.length &&
 											(<span>{linky.votes.length}&nbsp;{`like${linky.votes.length > 1 ? 's' : ''}`}</span>)
 										}
-										<span className="icon like-linky">
+										<span className="icon like-linky" onClick={this.likeCommentHandler}>
 											<i className="fa fa-thumbs-o-up"></i>
 										</span>
 									</span>
@@ -129,4 +161,12 @@ Linky.propTypes = {
 	onLinkyModified: func.isRequired
 };
 
-export default Linky;
+const LIKE_LINKY_MUTATION = gql`
+	mutation LikeLinkMutation($linkId: ID!) {
+		addLinkVote(linkId: $linkId) {
+			id
+		}
+	}
+`;
+
+export default graphql(LIKE_LINKY_MUTATION, { name: 'likeLinkyMutation' })(Linky);

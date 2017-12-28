@@ -35,13 +35,14 @@ export const SEARCH_LINKS_QUERY = gql`
 			id
 			createdAt
 			votes {
-				name
+				id
 			}
 			tags {
 				id
 				name
 			}
 			owner {
+				id
 				name
 			}
 			comments {

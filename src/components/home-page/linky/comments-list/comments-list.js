@@ -12,7 +12,7 @@ class CommentsList extends React.Component {
 	onSubmitComment = async (event) => {
 		event.preventDefault();
 
-		const newComment = await this.props.addCommentMutation({
+		await this.props.addCommentMutation({
 			variables: {
 				linkId: this.props.linky.id,
 				comment: this.commentText.value
