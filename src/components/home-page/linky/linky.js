@@ -84,7 +84,10 @@ class Linky extends React.Component {
 					<article className="media">
 						<div className="media-left">
 							<figure className="image is-64x64">
-								<img src="https://bulma.io/images/placeholders/128x128.png" alt={linky.text} />
+								<img
+									src={linky.imageUrl || '/images/linky-default-image.jpg'}
+									alt={linky.text}
+								/>
 							</figure>
 						</div>
 						<div className="media-content">
@@ -104,7 +107,11 @@ class Linky extends React.Component {
 										</span>
 									</span>
 								</p>
-								<a href={linky.url} className="url" target="_blank">{linky.url}</a>
+								<a href={linky.url} className="url" target="_blank">{linky.title || linky.url}</a>
+								{
+									linky.description &&
+									<p className="linky-description">{linky.description}</p>
+								}
 							</div>
 							<div className="level is-mobile">
 								<div className="level-left">
@@ -153,6 +160,9 @@ Linky.propTypes = {
 			name: string.isRequired
 		}),
 		url: string.isRequired,
+		title: string,
+		description: string,
+		imageUrl: string,
 		votes: array,
 		text: string,
 		tags: arrayOf(object),

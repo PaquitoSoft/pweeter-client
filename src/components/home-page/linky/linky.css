@@ -2,13 +2,21 @@
 	max-width: 88%;
 }
 
+.linky .media-content .content {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .linky .content p.linky-header {
 	margin-bottom: 5px;
 }
 
+.linky .content .linky-description {
+	font-style: italic;
+}
+
 .linky .url {
 	font-size: 24px;
-	padding-left: 10px;
 }
 
 .linky .created-date {

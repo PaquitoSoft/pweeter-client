@@ -3,6 +3,8 @@ import gql from 'graphql-tag';
 import graphql from 'react-apollo/graphql';
 import { object, func } from 'prop-types';
 
+import Notification from '../../shared/notification/notification';
+
 import './add-linky.css';
 
 class AddLinky extends React.Component {
@@ -12,19 +14,22 @@ class AddLinky extends React.Component {
 
 		this.state = {
 			isFolded: true,
-			isCreatingLinky: false
+			isCreatingLinky: false,
+			currentErrorMessage: undefined
 		};
 	}
 
 	documentClickHandler = e => {
 		const isChild = [...document.querySelectorAll('.add-linky-container *')].includes(e.target);
 		if (!isChild) {
+			this.linkUrl.value = '';
 			this.setState({ isFolded: true });
 		}
 	}
 
 	documentKeydownHandler = e => {
 		if (e.keyCode === 27) {
+			this.linkUrl.value = '';
 			this.setState({ isFolded: true });
 		}
 	}
@@ -39,7 +44,7 @@ class AddLinky extends React.Component {
 		document.removeEventListener('keydown', this.documentKeydownHandler);
 	}
 
-	addLinkHandler = (e) => {
+	addLinkHandler = async (e) => {
 		e.preventDefault();
 		this.setState({ isCreatingLinky: true });
 		this.props.createLinkMutation({
@@ -52,11 +57,22 @@ class AddLinky extends React.Component {
 				this.linkUrl.value = '';
 				this.setState({ isFolded: true, isCreatingLinky: false });
 			}
+		})
+		.catch(error => {
+			console.error('CreateLinkMutation::catch#', error);
+			let errorMessage = 'Something weird happened. Pelase, try again later.';
+			if (error.graphQLErrors && error.graphQLErrors.length) {
+				errorMessage = error.graphQLErrors[0].message;
+			}
+			this.setState({
+				currentErrorMessage: errorMessage,
+				isCreatingLinky: false
+			});
 		});
 	}
 
 	render() {
-		const { isFolded, isCreatingLinky } = this.state;
+		const { isFolded, isCreatingLinky, currentErrorMessage } = this.state;
 
 		const buttonProps = {
 			className: `button is-primary is-pulled-right add-linky ${isCreatingLinky ? 'is-loading' : ''}`,
@@ -91,6 +107,20 @@ class AddLinky extends React.Component {
 						/>
 					</div>
 				</div>
+				{
+					currentErrorMessage &&
+					<Notification closeHandler={event => {
+						// If I don't use the timeout, the document handler click will fire
+						// after the notification is removed from the document thus, it will
+						// think the click was outside the add-linky container and will fold
+						// the container
+						setTimeout(() => {
+							this.setState({ currentErrorMessage: undefined });
+						}, 4);
+					}}>
+						{currentErrorMessage}
+					</Notification>
+				}
 				<div className={`add-linky-actions ${isFolded ? 'hidden' : ''}`}>
 					<button {...buttonProps}>Share it!</button>
 				</div>
