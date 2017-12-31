@@ -1,10 +1,13 @@
 import React from 'react';
 import gql from 'graphql-tag';
 import graphql from 'react-apollo/graphql';
-import { object, func } from 'prop-types';
+import { func } from 'prop-types';
+import TagsInput from 'react-tagsinput';
+import Autosuggest from 'react-autosuggest';
 
 import Notification from '../../shared/notification/notification';
 
+import 'react-tagsinput/react-tagsinput.css';
 import './add-linky.css';
 
 class AddLinky extends React.Component {
@@ -15,32 +18,42 @@ class AddLinky extends React.Component {
 		this.state = {
 			isFolded: true,
 			isCreatingLinky: false,
-			currentErrorMessage: undefined
+			currentErrorMessage: undefined,
+			tags: [],
+			suggestions: [
+				{ id: 1, name: 'front-end' },
+				{ id: 2, name: 'back-end' },
+				{ id: 3, name: 'tech' },
+				{ id: 4, name: 'team-management' },
+				{ id: 5, name: 'agile' }
+			]
 		};
+
+		this.suggestedTagsRender = this.suggestedTagsRender.bind(this);
 	}
 
 	documentClickHandler = e => {
 		const isChild = [...document.querySelectorAll('.add-linky-container *')].includes(e.target);
 		if (!isChild) {
 			this.linkUrl.value = '';
-			this.setState({ isFolded: true });
+			this.setState({ isFolded: true, tags: [] });
 		}
 	}
 
 	documentKeydownHandler = e => {
 		if (e.keyCode === 27) {
 			this.linkUrl.value = '';
-			this.setState({ isFolded: true });
+			this.setState({ isFolded: true, tags: []  });
 		}
 	}
 
 	componentDidMount() {
-		document.addEventListener('click', this.documentClickHandler);
+		// document.addEventListener('click', this.documentClickHandler);
 		document.addEventListener('keydown', this.documentKeydownHandler);
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener('click', this.documentClickHandler);
+		// document.removeEventListener('click', this.documentClickHandler);
 		document.removeEventListener('keydown', this.documentKeydownHandler);
 	}
 
@@ -71,6 +84,46 @@ class AddLinky extends React.Component {
 		});
 	}
 
+	suggestedTagsRender({ addTag, ...props }) {
+		const handleChange = (event, { newValue, method }) => {
+			if (method === 'enter') {
+				event.preventDefault();
+			} else {
+				props.onChange(event);
+			}
+		};
+
+		const inputValue = (props.value && props.value.trim()) || '';
+		const inputLength = inputValue.length;
+
+		let suggestions = this.state.suggestions.filter(suggestion => {
+			console.log(suggestion.name, '---', inputValue);
+
+			console.log(suggestion.name.startsWith(inputValue));
+
+			return suggestion.name.startsWith(inputValue);
+		});
+
+		return (
+			<Autosuggest
+				ref={props.ref}
+				suggestions={suggestions}
+				shouldRenderSuggestion={value => value && value.trim().length > 0}
+				getSuggestionValue={suggestion => suggestion.value}
+				renderSuggestion={suggestion => (<span>{suggestion.name}</span>)}
+				inputProps={{ ...props, onChange: handleChange }}
+				onSuggestionSelected={(event, { suggestion }) => {
+					addTag(suggestion.name);
+				}}
+				onSuggestionsClearRequested={() => { console.log('onSuggestionsClearRequested'); }}
+				onSuggestionsFetchRequested={() => {
+					console.log('onSuggestionsFetchRequested');
+					return this.suggestions;
+				}}
+			/>
+		);
+	}
+
 	render() {
 		const { isFolded, isCreatingLinky, currentErrorMessage } = this.state;
 
@@ -99,11 +152,15 @@ class AddLinky extends React.Component {
 				</div>
 				<div className={`field ${isFolded ? 'hidden' : ''}`}>
 					<div className="control">
-						<input
-							className="input is-small"
-							name="linky-tags"
-							placeholder="Set some tags"
-							size="40"
+						<TagsInput
+							className="react-tagsinput tags-selector"
+							inputProps={{ placeholder: 'Set some tags' }}
+							value={this.state.tags}
+							// renderInput={this.suggestedTagsRender}
+							onChange={(selectedTags) => {
+								this.setState({ tags: selectedTags });
+								console.log('Selected tags:', selectedTags);
+							}}
 						/>
 					</div>
 				</div>

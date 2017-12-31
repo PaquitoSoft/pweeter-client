@@ -1,7 +1,36 @@
-.add-linky-container input[name="linky-tags"] {
+.add-linky-container input[name="linky-tags"],
+.add-linky-container .tags-selector {
 	width: 50%;
+	border-radius: 3px;
 }
 
 .add-linky-container button.add-linky {
 	min-width: 85px;
+}
+
+.add-linky-container .react-tagsinput {
+	padding-top: 4px;
+}
+
+.add-linky-container .react-tagsinput--focused {
+	border-color: #3273dc;
+	box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+}
+
+.add-linky-container .react-tagsinput-tag {
+	background-color: #00b89c;
+    border-color: transparent;
+    color: #fff
+}
+
+.add-linky-container .react-tagsinput-input {
+	width: 120px;
+	padding: 0;
+}
+
+.add-linky-container .react-tagsinput-tag {
+	padding: 0 0 0 5px;
+	border-radius: 3px;
+	margin-bottom: 6px;
+	margin-top: 0;
 }
