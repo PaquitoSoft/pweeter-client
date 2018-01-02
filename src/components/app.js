@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-	BrowserRouter
+	Router
 } from 'react-router-dom'
 
 import Route from '../components/shared/route/route';
@@ -11,7 +11,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import 'bulma/css/bulma.css';
 import './app.css';
 
-function App() {
+function App({ history }) {
 	return (
 		<div className="app">
 			<header>
@@ -29,13 +29,13 @@ function App() {
 				</div>
 			</header>
 
-			<BrowserRouter>
+			<Router history={history}>
 				<div className="main-content">
 					<Route exact path="/" component={HomePage} />
 					<Route path="/login" component={LoginPage} isPublicRoute={true} />
 					<Route path="/login-callback" component={LoginPage} isPublicRoute={true} />
 				</div>
-			</BrowserRouter>
+			</Router>
 		</div>
 	);
 }

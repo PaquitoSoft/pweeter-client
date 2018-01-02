@@ -10,6 +10,6 @@
 	margin-bottom: 20px;
 }
 
-.home-page .is-loading {
+.home-page .fetching-data-loading {
 	min-width: 200px;
 }
