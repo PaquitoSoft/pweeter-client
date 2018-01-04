@@ -79,11 +79,12 @@ class AutosuggestDemo extends React.Component {
 	}
 
 	render() {
+		const { onTagSelected = () => (false) } = this.props;
 		const { value, suggestions } = this.state;
 
 		// Autosuggest will pass through all these props to the input.
 		const inputProps = {
-			placeholder: 'Type a programming language',
+			placeholder: 'Set some tags',
 			value,
 			onChange: this.onChange.bind(this)
 		};
@@ -96,6 +97,10 @@ class AutosuggestDemo extends React.Component {
 				getSuggestionValue={getSuggestionValue}
 				renderSuggestion={renderSuggestion}
 				inputProps={inputProps}
+				onSuggestionSelected={(event, { suggestion }) => {
+					onTagSelected(suggestion.name);
+					this.setState({ value: '' });
+				}}
 			/>
 		);
 	}

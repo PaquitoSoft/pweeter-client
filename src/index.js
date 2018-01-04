@@ -19,7 +19,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 const browserHistory = createHistory();
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext((__, { headers }) => {
 	const auth = getAuth();
 	const _headers = { ...headers };
 

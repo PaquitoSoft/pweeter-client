@@ -6,6 +6,7 @@ import TagsInput from 'react-tagsinput';
 import Autosuggest from 'react-autosuggest';
 
 import Notification from '../../shared/notification/notification';
+import AutosuggestDemo from './autosuggest-demo';
 
 import 'react-tagsinput/react-tagsinput.css';
 import './add-linky.css';
@@ -84,7 +85,13 @@ class AddLinky extends React.Component {
 		});
 	}
 
-	suggestedTagsRender({ addTag, ...props }) {
+	suggestedTagsRender({ addTag }) {
+		return (
+			<AutosuggestDemo onTagSelected={addTag} />
+		);
+	}
+
+	_suggestedTagsRender({ addTag, ...props }) {
 		const handleChange = (event, { newValue, method }) => {
 			if (method === 'enter') {
 				event.preventDefault();
@@ -116,7 +123,16 @@ class AddLinky extends React.Component {
 					addTag(suggestion.name);
 				}}
 				onSuggestionsClearRequested={() => { console.log('onSuggestionsClearRequested'); }}
-				onSuggestionsFetchRequested={() => {
+				onSuggestionsFetchRequested={({ value, reason }) => {
+					/*
+						value - the current value of the input
+						reason - string describing why onSuggestionsFetchRequested was called. The possible values are:
+							'input-changed' - user typed something
+							'input-focused' - input was focused
+							'escape-pressed' - user pressed Escape to clear the input (and suggestions are shown for empty input)
+							'suggestions-revealed' - user pressed Up or Down to reveal suggestions
+							'suggestion-selected' - user selected a suggestion when alwaysRenderSuggestions={true}
+					*/
 					console.log('onSuggestionsFetchRequested');
 					return this.suggestions;
 				}}
@@ -156,13 +172,20 @@ class AddLinky extends React.Component {
 							className="react-tagsinput tags-selector"
 							inputProps={{ placeholder: 'Set some tags' }}
 							value={this.state.tags}
-							// renderInput={this.suggestedTagsRender}
+							renderInput={this.suggestedTagsRender}
 							onChange={(selectedTags) => {
 								this.setState({ tags: selectedTags });
 								console.log('Selected tags:', selectedTags);
 							}}
 						/>
 					</div>
+					{
+						/*
+							<div className="control">
+								<AutosuggestDemo />
+							</div>
+						*/
+					}
 				</div>
 				{
 					currentErrorMessage &&
