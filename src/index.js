@@ -17,6 +17,8 @@ import App from './components/app';
 
 import registerServiceWorker from './registerServiceWorker';
 
+// Create history here so we can interact with it from apollo links
+// https://github.com/ReactTraining/react-router/issues/4895
 const browserHistory = createHistory();
 
 const authLink = setContext((__, { headers }) => {

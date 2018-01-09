@@ -3,10 +3,9 @@ import gql from 'graphql-tag';
 import graphql from 'react-apollo/graphql';
 import { func } from 'prop-types';
 import TagsInput from 'react-tagsinput';
-import Autosuggest from 'react-autosuggest';
 
 import Notification from '../../shared/notification/notification';
-import AutosuggestDemo from './autosuggest-demo';
+import TagsSuggestions from './tags-suggestions';
 
 import 'react-tagsinput/react-tagsinput.css';
 import './add-linky.css';
@@ -20,25 +19,12 @@ class AddLinky extends React.Component {
 			isFolded: true,
 			isCreatingLinky: false,
 			currentErrorMessage: undefined,
-			tags: [],
-			suggestions: [
-				{ id: 1, name: 'front-end' },
-				{ id: 2, name: 'back-end' },
-				{ id: 3, name: 'tech' },
-				{ id: 4, name: 'team-management' },
-				{ id: 5, name: 'agile' }
-			]
+			tags: []
 		};
 
-		this.suggestedTagsRender = this.suggestedTagsRender.bind(this);
-	}
+		this.selectedSuggestions = [];
 
-	documentClickHandler = e => {
-		const isChild = [...document.querySelectorAll('.add-linky-container *')].includes(e.target);
-		if (!isChild) {
-			this.linkUrl.value = '';
-			this.setState({ isFolded: true, tags: [] });
-		}
+		this.suggestedTagsRender = this.suggestedTagsRender.bind(this);
 	}
 
 	documentKeydownHandler = e => {
@@ -49,22 +35,21 @@ class AddLinky extends React.Component {
 	}
 
 	componentDidMount() {
-		// document.addEventListener('click', this.documentClickHandler);
 		document.addEventListener('keydown', this.documentKeydownHandler);
 	}
 
 	componentWillUnmount() {
-		// document.removeEventListener('click', this.documentClickHandler);
 		document.removeEventListener('keydown', this.documentKeydownHandler);
 	}
 
 	addLinkHandler = async (e) => {
 		e.preventDefault();
+		// TODO Validate URL and tags are provided
 		this.setState({ isCreatingLinky: true });
 		this.props.createLinkMutation({
 			variables: {
 				url: this.linkUrl.value,
-				tags: [] // TODO
+				tags: [] // TODO: send the suggesstions
 			},
 			update: (store, { data: { createLink } }) => {
 				this.props.onLinkyAdded(store, createLink);
@@ -87,56 +72,12 @@ class AddLinky extends React.Component {
 
 	suggestedTagsRender({ addTag }) {
 		return (
-			<AutosuggestDemo onTagSelected={addTag} />
-		);
-	}
-
-	_suggestedTagsRender({ addTag, ...props }) {
-		const handleChange = (event, { newValue, method }) => {
-			if (method === 'enter') {
-				event.preventDefault();
-			} else {
-				props.onChange(event);
-			}
-		};
-
-		const inputValue = (props.value && props.value.trim()) || '';
-		const inputLength = inputValue.length;
-
-		let suggestions = this.state.suggestions.filter(suggestion => {
-			console.log(suggestion.name, '---', inputValue);
-
-			console.log(suggestion.name.startsWith(inputValue));
-
-			return suggestion.name.startsWith(inputValue);
-		});
-
-		return (
-			<Autosuggest
-				ref={props.ref}
-				suggestions={suggestions}
-				shouldRenderSuggestion={value => value && value.trim().length > 0}
-				getSuggestionValue={suggestion => suggestion.value}
-				renderSuggestion={suggestion => (<span>{suggestion.name}</span>)}
-				inputProps={{ ...props, onChange: handleChange }}
-				onSuggestionSelected={(event, { suggestion }) => {
+			<TagsSuggestions onTagSelected={suggestion => {
+				if (!this.selectedSuggestions.some(_suggestion => _suggestion.id === suggestion.id)) {
+					this.selectedSuggestions.push(suggestion);
 					addTag(suggestion.name);
-				}}
-				onSuggestionsClearRequested={() => { console.log('onSuggestionsClearRequested'); }}
-				onSuggestionsFetchRequested={({ value, reason }) => {
-					/*
-						value - the current value of the input
-						reason - string describing why onSuggestionsFetchRequested was called. The possible values are:
-							'input-changed' - user typed something
-							'input-focused' - input was focused
-							'escape-pressed' - user pressed Escape to clear the input (and suggestions are shown for empty input)
-							'suggestions-revealed' - user pressed Up or Down to reveal suggestions
-							'suggestion-selected' - user selected a suggestion when alwaysRenderSuggestions={true}
-					*/
-					console.log('onSuggestionsFetchRequested');
-					return this.suggestions;
-				}}
-			/>
+				}
+			}} />
 		);
 	}
 
@@ -179,13 +120,6 @@ class AddLinky extends React.Component {
 							}}
 						/>
 					</div>
-					{
-						/*
-							<div className="control">
-								<AutosuggestDemo />
-							</div>
-						*/
-					}
 				</div>
 				{
 					currentErrorMessage &&
@@ -194,9 +128,10 @@ class AddLinky extends React.Component {
 						// after the notification is removed from the document thus, it will
 						// think the click was outside the add-linky container and will fold
 						// the container
-						setTimeout(() => {
-							this.setState({ currentErrorMessage: undefined });
-						}, 4);
+						// setTimeout(() => {
+						// 	this.setState({ currentErrorMessage: undefined });
+						// }, 4);
+						this.setState({ currentErrorMessage: undefined });
 					}}>
 						{currentErrorMessage}
 					</Notification>

@@ -1,29 +1,20 @@
 import React from 'react';
+import { func, object } from 'prop-types';
+import { withApollo } from 'react-apollo/withApollo';
+import gql from 'graphql-tag';
 import Autosuggest from 'react-autosuggest';
 
-import './autosuggest-demo.css';
+import './tags-suggestions.css';
 
-// Imagine you have a list of languages that you'd like to autosuggest.
-const languages = [
-	{ name: 'C', year: 1972 },
-	{ name: 'Elm', year: 2012 },
-	{ name: 'Javascript', year: 1995 },
-	{ name: 'Java', year: 1990 },
-	{ name: 'Ruby', year: 1990 },
-	{ name: 'Python', year: 1990 },
-	{ name: 'Rust', year: 1990 },
-	{ name: 'C#', year: 1990 }
-];
 
-// Teach Autosuggest how to calculate suggestions for any given input value.
-function getSuggestions(value) {
-	const inputValue = value.trim().toLowerCase();
-	const inputLength = inputValue.length;
-
-	return inputLength === 0 ? [] : languages.filter(lang => {
-		return lang.name.toLocaleLowerCase().slice(0, inputLength) === inputValue;
-	});
-}
+const TAGS_SEARCH_QUERY = gql`
+	query TagsSearchQuery($filter: String!) {
+		searchTags(filter: $filter) {
+			id
+			name
+		}
+	}
+`;
 
 // When suggestion is clicked, Autosuggest needs to populate the input
 // based on the clicked suggestion. Teach Autosuggest how to calculate the
@@ -36,7 +27,7 @@ const renderSuggestion = suggestion => (
 	</div>
 );
 
-class AutosuggestDemo extends React.Component {
+class TagsSuggestions extends React.Component {
 	constructor() {
 		super();
 
@@ -57,7 +48,7 @@ class AutosuggestDemo extends React.Component {
 
 	// Autosuggest will call this function every time you need to update suggestions.
 	// You already implemented this logic above, so just use it.
-	onSuggestionsFetchRequested({ value, reason }) {
+	onSuggestionsFetchRequested({ value/* , reason */}) {
 
 		/*
 			value - the current value of the input
@@ -68,9 +59,22 @@ class AutosuggestDemo extends React.Component {
 				'suggestions-revealed' - user pressed Up or Down to reveal suggestions
 				'suggestion-selected' - user selected a suggestion when alwaysRenderSuggestions={true}
 		*/
-		this.setState({
-			suggestions: getSuggestions(value)
-		});
+
+		if (value && value.length > 1) {
+			this.props.client.query({
+				query: TAGS_SEARCH_QUERY,
+				variables: { filter: value }
+			})
+			.then(response => {
+				console.log('These are the tags founded:', response.data.searchTags);
+				this.setState({
+					suggestions: response.data.searchTags
+				})
+			})
+			.catch(error => {
+				console.error('Error searching for tags:', error);
+			});
+		}
 	}
 
 	// Autosuggest will call this function every time you need to clear suggestions.
@@ -98,7 +102,7 @@ class AutosuggestDemo extends React.Component {
 				renderSuggestion={renderSuggestion}
 				inputProps={inputProps}
 				onSuggestionSelected={(event, { suggestion }) => {
-					onTagSelected(suggestion.name);
+					onTagSelected(suggestion);
 					this.setState({ value: '' });
 				}}
 			/>
@@ -107,4 +111,10 @@ class AutosuggestDemo extends React.Component {
 
 }
 
-export default AutosuggestDemo;
+
+TagsSuggestions.propTypes = {
+	onTagSelected: func,
+	client: object.isRequired
+};
+
+export default withApollo(TagsSuggestions);
