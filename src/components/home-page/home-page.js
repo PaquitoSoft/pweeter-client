@@ -42,7 +42,7 @@ class HomePage extends React.Component {
 		});
 	}
 
-	renderLinkies(linkies) {
+	renderLinkies(linkies = []) {
 		return linkies.map(linky =>
 			(<Linky
 				key={linky.id}
