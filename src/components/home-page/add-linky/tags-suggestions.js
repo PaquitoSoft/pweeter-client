@@ -40,10 +40,19 @@ class TagsSuggestions extends React.Component {
 			value: '',
 			suggestions: []
 		};
+
+		this.onChange = this.onChange.bind(this);
+		this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+		this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
 	}
 
-	onChange(value, { newValue }) {
-		this.setState({ value: newValue });
+	onChange(event) {
+		this.setState({ value: event.target.value });
+		this.props.onChange(event.target.value);
+	}
+
+	getCurrentValue() {
+		return this.state.value;
 	}
 
 	// Autosuggest will call this function every time you need to update suggestions.
@@ -90,18 +99,19 @@ class TagsSuggestions extends React.Component {
 		const inputProps = {
 			placeholder: 'Set some tags',
 			value,
-			onChange: this.onChange.bind(this)
+			onChange: this.onChange
 		};
 
 		return (
 			<Autosuggest
 				suggestions={suggestions}
-				onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(this)}
-				onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}
+				onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+				onSuggestionsClearRequested={this.onSuggestionsClearRequested}
 				getSuggestionValue={getSuggestionValue}
 				renderSuggestion={renderSuggestion}
 				inputProps={inputProps}
 				onSuggestionSelected={(event, { suggestion }) => {
+					console.log('Suggestion selected:', suggestion);
 					onTagSelected(suggestion);
 					this.setState({ value: '' });
 				}}
@@ -113,7 +123,8 @@ class TagsSuggestions extends React.Component {
 
 
 TagsSuggestions.propTypes = {
-	onTagSelected: func,
+	onChange: func.isRequired,
+	onTagSelected: func.isRequired,
 	client: object.isRequired
 };
 

@@ -19,7 +19,8 @@ class AddLinky extends React.Component {
 			isFolded: true,
 			isCreatingLinky: false,
 			currentErrorMessage: undefined,
-			tags: []
+			tags: [],
+			currentTagValue: ''
 		};
 
 		this.selectedSuggestions = [];
@@ -42,19 +43,50 @@ class AddLinky extends React.Component {
 		document.removeEventListener('keydown', this.documentKeydownHandler);
 	}
 
+	isNewDataValid() {
+		return this.linkUrl.value.startsWith('http');
+	}
+
 	addLinkHandler = async (e) => {
 		e.preventDefault();
-		// TODO Validate URL and tags are provided
+
 		this.setState({ isCreatingLinky: true });
+
+		const tags = [
+			...this.selectedSuggestions
+				.map(tag => ({
+					id: tag.id,
+					name: tag.name
+				})),
+			...this.state.currentTagValue
+				.split(' ')
+				.filter(text => text.length > 0)
+				.map(tagName => ({ name: tagName }))
+		];
+
+		console.log('These are the tags we will send to server:', tags);
+
+		if (!this.isNewDataValid()) {
+			this.setState({ isCreatingLinky: false });
+			return false;
+		}
+
 		this.props.createLinkMutation({
 			variables: {
 				url: this.linkUrl.value,
-				tags: [] // TODO: send the suggesstions
+				tags
 			},
 			update: (store, { data: { createLink } }) => {
+				// TODO: If we look for a non existing tag when creating a linky
+				// and then creating it in the process of the new linky creation,
+				// if we search for it again (wo/ reloading the page), it is not found.
+				// It seems Apollo is caching the query with no results so we need to
+				// refresh that query cache too
 				this.props.onLinkyAdded(store, createLink);
 				this.linkUrl.value = '';
-				this.setState({ isFolded: true, isCreatingLinky: false });
+				this.selectedSuggestions = [];
+				this.setState({ isFolded: true, isCreatingLinky: false, currentTagValue: '' });
+				// TODO: I need to reset the autosuggest current selected suggestions and value
 			}
 		})
 		.catch(error => {
@@ -72,12 +104,15 @@ class AddLinky extends React.Component {
 
 	suggestedTagsRender({ addTag }) {
 		return (
-			<TagsSuggestions onTagSelected={suggestion => {
-				if (!this.selectedSuggestions.some(_suggestion => _suggestion.id === suggestion.id)) {
-					this.selectedSuggestions.push(suggestion);
-					addTag(suggestion.name);
-				}
-			}} />
+			<TagsSuggestions
+				onChange={tagValue => this.setState({ currentTagValue: tagValue || '' })}
+				onTagSelected={suggestion => {
+					if (!this.selectedSuggestions.some(_suggestion => _suggestion.id === suggestion.id)) {
+						this.selectedSuggestions.push(suggestion);
+						addTag(suggestion.name);
+					}
+				}}
+			/>
 		);
 	}
 
@@ -150,7 +185,7 @@ AddLinky.propTypes = {
 };
 
 const CREATE_LINK_MUTATION = gql`
-	mutation CreateLinkMutation($url: String!, $tags: [ID!]) {
+	mutation CreateLinkMutation($url: String!, $tags: [LinkTag]) {
 		createLink(link: {
 			url: $url,
 			tags: $tags
