@@ -85,8 +85,7 @@ class AddLinky extends React.Component {
 				this.props.onLinkyAdded(store, createLink);
 				this.linkUrl.value = '';
 				this.selectedSuggestions = [];
-				this.setState({ isFolded: true, isCreatingLinky: false, currentTagValue: '' });
-				// TODO: I need to reset the autosuggest current selected suggestions and value
+				this.setState({ isFolded: true, isCreatingLinky: false, tags: [], currentTagValue: '' });
 			}
 		})
 		.catch(error => {
@@ -97,7 +96,8 @@ class AddLinky extends React.Component {
 			}
 			this.setState({
 				currentErrorMessage: errorMessage,
-				isCreatingLinky: false
+				isCreatingLinky: false,
+				tags: []
 			});
 		});
 	}
@@ -142,20 +142,23 @@ class AddLinky extends React.Component {
 						/>
 					</div>
 				</div>
-				<div className={`field ${isFolded ? 'hidden' : ''}`}>
-					<div className="control">
-						<TagsInput
-							className="react-tagsinput tags-selector"
-							inputProps={{ placeholder: 'Set some tags' }}
-							value={this.state.tags}
-							renderInput={this.suggestedTagsRender}
-							onChange={(selectedTags) => {
-								this.setState({ tags: selectedTags });
-								console.log('Selected tags:', selectedTags);
-							}}
-						/>
+				{
+					!isFolded &&
+					<div className="field">
+						<div className="control">
+							<TagsInput
+								className="react-tagsinput tags-selector"
+								inputProps={{ placeholder: 'Set some tags' }}
+								value={this.state.tags}
+								renderInput={this.suggestedTagsRender}
+								onChange={(selectedTags) => {
+									this.setState({ tags: selectedTags });
+									console.log('Selected tags:', selectedTags);
+								}}
+							/>
+						</div>
 					</div>
-				</div>
+				}
 				{
 					currentErrorMessage &&
 					<Notification closeHandler={event => {
@@ -171,9 +174,12 @@ class AddLinky extends React.Component {
 						{currentErrorMessage}
 					</Notification>
 				}
-				<div className={`add-linky-actions ${isFolded ? 'hidden' : ''}`}>
-					<button {...buttonProps}>Share it!</button>
-				</div>
+				{
+					!isFolded &&
+					<div className="add-linky-actions">
+						<button {...buttonProps}>Share it!</button>
+					</div>
+				}
 			</section>
 		);
 	}

@@ -1,3 +1,7 @@
+.linky .media .image img {
+	border-radius: 2px;
+}
+
 .linky .media-content {
 	max-width: 88%;
 }

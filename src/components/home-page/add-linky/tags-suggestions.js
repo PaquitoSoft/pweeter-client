@@ -72,7 +72,11 @@ class TagsSuggestions extends React.Component {
 		if (value && value.length > 1) {
 			this.props.client.query({
 				query: TAGS_SEARCH_QUERY,
-				variables: { filter: value }
+				variables: { filter: value },
+				// TODO Carlos: When creating a new linky with new tags, it's not easy at all
+				// to update local cache for new tags queries cached with no result
+				// so I ended up ignoring cache for this query
+				fetchPolicy: 'network-only'
 			})
 			.then(response => {
 				console.log('These are the tags founded:', response.data.searchTags);
