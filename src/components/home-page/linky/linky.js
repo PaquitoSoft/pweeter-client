@@ -10,6 +10,8 @@ import DateTime from '../../shared/date-time/date-time';
 
 import './linky.css';
 
+const DEFAULT_LINKY_IMAGE = '/images/linky-default-image.jpg';
+
 function renderTags(tags) {
 	return tags.map(tag => {
 		return (<Tag key={tag.id} tag={tag} onClick={() => (void 0)} />);
@@ -85,8 +87,11 @@ class Linky extends React.Component {
 						<div className="media-left">
 							<figure className="image is-64x64">
 								<img
-									src={linky.imageUrl || '/images/linky-default-image.jpg'}
+									src={linky.imageUrl || DEFAULT_LINKY_IMAGE}
 									alt={linky.text}
+									onError={(e) => {
+										e.target.setAttribute('src', DEFAULT_LINKY_IMAGE);
+									}}
 								/>
 							</figure>
 						</div>
