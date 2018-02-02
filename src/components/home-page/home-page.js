@@ -18,7 +18,7 @@ class HomePage extends React.Component {
 		};
 	}
 
-	updateLinkiesCache = (store, linky) => {
+	updateLinkiesCache = (store, linky, isRemoveAction) => {
 		const queryInfo = {
 			query: SEARCH_LINKS_QUERY,
 			variables: {
@@ -31,7 +31,11 @@ class HomePage extends React.Component {
 		const linkyIndex = data.searchLinks.findIndex(link => link.id === linky.id);
 
 		if (linkyIndex !== -1) {
-			data.searchLinks.splice(linkyIndex, 1, linky);
+			if (isRemoveAction) {
+				data.searchLinks = data.searchLinks.filter(_linky => _linky.id !== linky.id);
+			} else {
+				data.searchLinks.splice(linkyIndex, 1, linky);
+			}
 		} else {
 			data.searchLinks.unshift(linky);
 		}

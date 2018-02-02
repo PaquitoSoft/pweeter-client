@@ -1,6 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import graphql from 'react-apollo/graphql';
+import { graphql, compose } from 'react-apollo';
 import { shape, arrayOf, string, array, object, func } from 'prop-types';
 import { getAuth } from '../../../service/authentication';
 
@@ -11,12 +11,6 @@ import DateTime from '../../shared/date-time/date-time';
 import './linky.css';
 
 const DEFAULT_LINKY_IMAGE = '/images/linky-default-image.jpg';
-
-function renderTags(tags) {
-	return tags.map(tag => {
-		return (<Tag key={tag.id} tag={tag} onClick={() => (void 0)} />);
-	});
-}
 
 class Linky extends React.Component {
 
@@ -48,7 +42,20 @@ class Linky extends React.Component {
 		this.props.onLinkyModified(store, _linky);
 	}
 
-	likeCommentHandler = (event) => {
+	removeLinkyHandler = () => {
+		const { linky } = this.props;
+
+		this.props.removeLinkyMutation({
+			variables: { linkId: linky.id },
+			update: (store, { data: { removeLinky } }) => {
+				this.props.onLinkyModified(store, linky, true);
+				// TODO Maybe we should load more linkies if new amount
+				// is quite low (less than a virtual page)
+			}
+		});
+	}
+
+	likeLinkyHandler = (event) => {
 		event.preventDefault();
 		const { linky } = this.props;
 		const userInfo = getAuth();
@@ -75,6 +82,28 @@ class Linky extends React.Component {
 				}
 			});
 		}
+	}
+
+	renderLinkyActions = (linky) => {
+		const userInfo = getAuth();
+		return (linky.owner.id === userInfo.id) ?
+			(
+				<span className="icon like-linky" onClick={this.removeLinkyHandler}>
+					<i className="fa fa-trash-o"></i>
+				</span>
+			)
+			:
+			(
+				<span className="icon like-linky" onClick={this.likeLinkyHandler}>
+					<i className="fa fa-thumbs-o-up"></i>
+				</span>
+			);
+	}
+
+	renderTags = (tags) => {
+		return tags.map(tag => {
+			return (<Tag key={tag.id} tag={tag} onClick={() => (void 0)} />);
+		});
 	}
 
 	render() {
@@ -107,9 +136,7 @@ class Linky extends React.Component {
 											!!linky.votes.length &&
 											(<span>{linky.votes.length}&nbsp;{`like${linky.votes.length > 1 ? 's' : ''}`}</span>)
 										}
-										<span className="icon like-linky" onClick={this.likeCommentHandler}>
-											<i className="fa fa-thumbs-o-up"></i>
-										</span>
+										{this.renderLinkyActions(linky)}
 									</span>
 								</p>
 								<a href={linky.url} className="url" target="_blank">{linky.title || linky.url}</a>
@@ -120,7 +147,7 @@ class Linky extends React.Component {
 							</div>
 							<div className="level is-mobile">
 								<div className="level-left">
-									{renderTags(linky.tags)}
+									{this.renderTags(linky.tags)}
 								</div>
 								<div className="level-right">
 									<a
@@ -184,4 +211,13 @@ const LIKE_LINKY_MUTATION = gql`
 	}
 `;
 
-export default graphql(LIKE_LINKY_MUTATION, { name: 'likeLinkyMutation' })(Linky);
+const REMOVE_LINKY_MUTATION = gql`
+	mutation RemoveLinkyMutation($linkId: ID!) {
+		removeLink(linkId: $linkId)
+	}
+`;
+
+export default compose(
+	graphql(REMOVE_LINKY_MUTATION, { name: 'removeLinkyMutation' }),
+	graphql(LIKE_LINKY_MUTATION, { name: 'likeLinkyMutation' })
+)(Linky);

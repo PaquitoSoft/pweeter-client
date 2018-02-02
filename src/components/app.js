@@ -2,6 +2,7 @@ import React from 'react';
 import {
 	Router
 } from 'react-router-dom'
+import { object } from 'prop-types';
 
 import Route from '../components/shared/route/route';
 import HomePage from './home-page/home-page';
@@ -39,5 +40,9 @@ function App({ history }) {
 		</div>
 	);
 }
+
+App.propTypes = {
+	history: object
+};
 
 export default App;
