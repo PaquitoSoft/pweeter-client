@@ -1,0 +1,18 @@
+#app-header {
+	padding-bottom: 0;
+}
+
+#app-header .user-gravatar {
+	text-align: right;
+}
+
+#app-header .user-gravatar img {
+	/* cursor: pointer; */
+	border-radius: 3px;
+	height: 36px;
+}
+
+#app-header .user-gravatar a {
+	padding: 0;
+	margin-top: 2px;
+}

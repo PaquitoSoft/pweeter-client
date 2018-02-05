@@ -49,3 +49,7 @@ export function getValue(key) {
 		return null;
 	}
 }
+
+export function removeValue(key) {
+	window.localStorage.removeItem(key);
+}

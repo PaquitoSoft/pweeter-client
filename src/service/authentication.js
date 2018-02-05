@@ -1,4 +1,4 @@
-import { getValue, storeValue } from '../plugins/local-cache';
+import { getValue, storeValue, removeValue } from '../plugins/local-cache';
 
 const USER_AUTH_KEY = 'ua';
 
@@ -14,4 +14,8 @@ export function getAuth() {
 
 export function storeAuth(authData) {
 	userAuthData = storeValue(USER_AUTH_KEY, authData);
+}
+
+export function cleanAuth() {
+	removeValue(USER_AUTH_KEY);
 }

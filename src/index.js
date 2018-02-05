@@ -21,6 +21,8 @@ import registerServiceWorker from './registerServiceWorker';
 // https://github.com/ReactTraining/react-router/issues/4895
 const browserHistory = createHistory();
 
+const cache = new InMemoryCache();
+
 const authLink = setContext((__, { headers }) => {
 	const auth = getAuth();
 	const _headers = { ...headers };
@@ -50,11 +52,13 @@ const errorHandlerLink = onError(({ graphQLErrors, networkError }) => {
 		// TODO Show generic error to user
 		console.log(`[Network error]: ${networkError}`);
 	}
+
+	return null;
 });
 
 const client = new ApolloClient({
 	link: ApolloLink.from([errorHandlerLink, authLink, httpLink]),
-	cache: new InMemoryCache()
+	cache
 });
 
 const Main = (

@@ -4,10 +4,6 @@ body {
 	font-family: sans-serif;
 }
 
-.app header {
-	margin-left: 1.5rem;
-}
-
 .app a {
 	color: #00d1b2;
 }
@@ -18,6 +14,10 @@ body {
 
 .app header {
 	margin-top: 25px;
+}
+
+.app .main-content > section {
+	padding-top: 30px;
 }
 
 /* Helpers */
