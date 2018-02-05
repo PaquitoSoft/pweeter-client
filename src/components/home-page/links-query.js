@@ -74,9 +74,28 @@ export default graphql(
 			};
 		},
 		props: _props => {
-			// console.log('LinksQuery::props#', JSON.stringify(_props));
 			function loadMoreLinks(first, count) {
-				return _props.searchLinksQuery.fetchMore({
+				return new Promise((resolve) => {
+					_props.searchLinksQuery.fetchMore({
+						// query: SEARCH_LINKS_QUERY, // No need to set if it's the same as the original query
+						variables: { first, count },
+						updateQuery: (prevLinksResult, { fetchMoreResult }) => {
+							if (!fetchMoreResult) return prevLinksResult; // eslint-disable-line
+
+							// I needed this to know, in home-page, when there is no more linkies to load
+							setTimeout(() => {
+								resolve(fetchMoreResult.searchLinks);
+							});
+
+							return {
+								...prevLinksResult,
+								searchLinks: [...prevLinksResult.searchLinks, ...fetchMoreResult.searchLinks]
+							};
+						}
+					});
+				});
+
+				/* return _props.searchLinksQuery.fetchMore({
 					// query: SEARCH_LINKS_QUERY, // No need to set if it's the same as the original query
 					variables: { first, count },
 					updateQuery: (prevLinksResult, { fetchMoreResult }) => {
@@ -86,7 +105,7 @@ export default graphql(
 							searchLinks: [...prevLinksResult.searchLinks, ...fetchMoreResult.searchLinks]
 						};
 					}
-				});
+				}); */
 			}
 
 			return {
