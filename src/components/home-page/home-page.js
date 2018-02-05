@@ -1,9 +1,11 @@
 import React, { Fragment } from 'react';
 import { bool, array, func } from 'prop-types';
 
+import InfiniteScroll from 'react-infinite-scroller';
 import AddLinky from './add-linky/add-linky';
 import Linky from './linky/linky';
 import LinksQuery, { SEARCH_LINKS_QUERY } from './links-query';
+import Loader from '../shared/loader/loader';
 
 import './home-page.css';
 
@@ -13,9 +15,11 @@ class HomePage extends React.Component {
 
 	constructor() {
 		super();
+
 		this.state = {
-			currentPage: 1
-		};
+			currentPage: 1,
+			loadMoreResults: true
+		}
 	}
 
 	updateLinkiesCache = (store, linky, isRemoveAction) => {
@@ -23,7 +27,7 @@ class HomePage extends React.Component {
 			query: SEARCH_LINKS_QUERY,
 			variables: {
 				first: 0,
-				count: this.state.currentPage * RESULTS_QUERY_COUNT
+				count: this.currentPage * RESULTS_QUERY_COUNT
 			}
 		};
 		const data = store.readQuery(queryInfo);
@@ -57,12 +61,14 @@ class HomePage extends React.Component {
 	}
 
 	render() {
+		const { currentPage, loadMoreResults } = this.state;
+
 		return (
 			<section className="section home-page">
 				<div className="columns">
 					<div className="column is-8 is-offset-2">
 						<LinksQuery queryResultsSize={RESULTS_QUERY_COUNT}>
-							{({ links/* , loadMoreLinks */ }) => {
+							{({ links, loadMoreLinks }) => {
 								return (
 									<Fragment>
 										<AddLinky
@@ -71,7 +77,23 @@ class HomePage extends React.Component {
 										/>
 										<section key="list" className="pweets-list-container">
 											<ol>
-												{this.renderLinkies(links)}
+												<InfiniteScroll
+													pageStart={0}
+													loadMore={() => {
+														loadMoreLinks(currentPage * RESULTS_QUERY_COUNT, RESULTS_QUERY_COUNT)
+															.then((newResults) => {
+																this.setState(prevState => {
+																	return {
+																		currentPage: ++prevState.currentPage,
+																		loadMoreResults: newResults.length > 0
+																	}
+																});
+															});
+													}}
+													hasMore={loadMoreResults}>
+													{this.renderLinkies(links)}
+													{loadMoreResults && <Loader />}
+												</InfiniteScroll>
 											</ol>
 										</section>
 									</Fragment>
