@@ -9,7 +9,7 @@ import Loader from '../shared/loader/loader';
 
 import './home-page.css';
 
-const RESULTS_QUERY_COUNT = 5;
+const RESULTS_QUERY_COUNT = 10;
 
 class HomePage extends React.Component {
 
