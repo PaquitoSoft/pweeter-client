@@ -26,7 +26,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "pre-deploy": "shx cp ./build/index.html ./build/200.html",
-    "deploy": "npm run build && npm run pre-deploy && surge --domain linky.surge.sh -p ./build"
+    "deploy": "npm run build && npm run pre-deploy && surge --domain https://linky.surge.sh -p ./build"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
