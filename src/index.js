@@ -12,7 +12,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import createHistory from 'history/createBrowserHistory'
 
 import { SERVER_API_URL } from './config/app-config';
-import { getAuth } from './service/authentication';
+import authentication from './service/authentication';
 import App from './components/app';
 
 import registerServiceWorker from './registerServiceWorker';
@@ -24,7 +24,7 @@ const browserHistory = createHistory();
 const cache = new InMemoryCache();
 
 const authLink = setContext((__, { headers }) => {
-	const auth = getAuth();
+	const auth = authentication.getAuth();
 	const _headers = { ...headers };
 
 	if (auth && auth.token) {

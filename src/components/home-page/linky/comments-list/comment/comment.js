@@ -2,7 +2,7 @@ import React from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { shape, string, func } from 'prop-types';
-import { getAuth } from '../../../../../service/authentication';
+import authentication from '../../../../../service/authentication';
 
 import DateTime from '../../../../shared/date-time/date-time';
 
@@ -21,7 +21,7 @@ function removeComment(linkyId, commentId, mutation, updateCache) { // eslint-di
 }
 
 function Comment({ linkyId, comment, removeCommentMutation, removeCommentHandler }) {
-	const isRemoveAllowed = comment.user.id === getAuth().id;
+	const isRemoveAllowed = comment.user.id === authentication.getAuth().id;
 
 	return (
 		<article className="comment media">

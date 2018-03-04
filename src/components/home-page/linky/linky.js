@@ -2,7 +2,7 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { graphql, compose } from 'react-apollo';
 import { shape, arrayOf, string, array, object, func } from 'prop-types';
-import { getAuth } from '../../../service/authentication';
+import authentication from '../../../service/authentication';
 
 import Tag from './tag/tag';
 import CommentsList from './comments-list/comments-list';
@@ -58,7 +58,7 @@ class Linky extends React.Component {
 	likeLinkyHandler = (event) => {
 		event.preventDefault();
 		const { linky } = this.props;
-		const userInfo = getAuth();
+		const userInfo = authentication.getAuth();
 		const alreadyVoted = !!linky.votes.find(({ id }) => id === userInfo.id);
 
 		// TODO Only use server validation???
@@ -85,7 +85,7 @@ class Linky extends React.Component {
 	}
 
 	renderLinkyActions = (linky) => {
-		const userInfo = getAuth();
+		const userInfo = authentication.getAuth();
 		return (linky.owner.id === userInfo.id) ?
 			(
 				<span className="icon like-linky" onClick={this.removeLinkyHandler}>

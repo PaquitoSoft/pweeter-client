@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { func, shape, string } from 'prop-types';
 
 import { GITHUB_CLIENT_ID } from '../../config/app-config';
-import { storeAuth } from '../../service/authentication';
+import authentication from '../../service/authentication';
 
 import './login-page.css';
 
@@ -20,7 +20,7 @@ function LoginPage({ location, loginMutation, history }) {
 			variables: { code, state }
 		})
 		.then(result => {
-			storeAuth(result.data.login);
+			authentication.storeAuth(result.data.login);
 			history.push('/');
 		})
 		.catch(error => {

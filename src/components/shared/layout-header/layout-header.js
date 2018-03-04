@@ -1,7 +1,7 @@
 import React from 'react';
 import md5 from 'md5';
 
-import { getAuth, isUserLogged, cleanAuth } from '../../../service/authentication';
+import authentication from '../../../service/authentication';
 
 import './layout-header.css';
 
@@ -18,7 +18,10 @@ function renderUserArea(userAuth) {
 						<a
 							href="/"
 							className="dropdown-item"
-							onClick={cleanAuth}>
+							onClick={(e) => {
+								// e.preventDefault();
+								authentication.cleanAuth();
+							}}>
 							Logout
 						</a>
 					</p>
@@ -28,39 +31,51 @@ function renderUserArea(userAuth) {
 	);
 }
 
-function LayoutHeader() {
-	const userAuth = getAuth();
+class LayoutHeader extends React.Component {
 
-	return (
-		<section id="app-header" className="section">
-			<div className="columns">
-				<div className="column is-8 is-offset-2">
-					<nav className="level">
-						<div className="level-left">
-							<div className="level-item">
-								<div>
-									<a href="/">
-										<h1 className="title">
-											Linky
-										</h1>
-									</a>
-									<p className="subtitle">
-										Share interest technical content with your collegues
-									</p>
+	componentDidMount() {
+		authentication.onAuthChanged(() => {
+			this.forceUpdate();
+		});
+	}
+
+	render() {
+		const userAuth = authentication.getAuth();
+
+		return (
+			<section id="app-header" className="section">
+				<div className="columns">
+					<div className="column is-8 is-offset-2">
+						<nav className="level">
+							<div className="level-left">
+								<div className="level-item">
+									<div>
+										<a href="/">
+											<h1 className="title">
+												Linky
+											</h1>
+										</a>
+										<p className="subtitle">
+											Share interest technical content with your collegues
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
 
-						{
-							isUserLogged() &&
-							renderUserArea(userAuth)
-						}
+							{
+								authentication.isUserLogged() &&
+								renderUserArea(userAuth)
+							}
 
-					</nav>
+						</nav>
+					</div>
 				</div>
-			</div>
-		</section>
-	);
+			</section>
+		);
+
+	}
+
 }
+
 
 export default LayoutHeader;
