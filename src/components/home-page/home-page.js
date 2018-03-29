@@ -27,7 +27,7 @@ class HomePage extends React.Component {
 			query: SEARCH_LINKS_QUERY,
 			variables: {
 				first: 0,
-				count: this.currentPage * RESULTS_QUERY_COUNT
+				count: this.state.currentPage * RESULTS_QUERY_COUNT
 			}
 		};
 		const data = store.readQuery(queryInfo);
